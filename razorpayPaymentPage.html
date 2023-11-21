@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Razorpay Payment</title>
+</head>
+<body>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+	<script>
+		var orderId = /*[[${orderId}]]*/ ''; 
+		//var amount = /*[[${total}]]*/ ''; 
+		var amount = 250;
+
+		amount = parseFloat(amount);
+		//amount = parseInt(amount);
+
+		if (!isNaN(amount)) {
+   			 var amount = Math.round(amount* 100); 
+
+    	if (Number.isInteger(amount) && amount >= 100) {
+       		 var amount = amount; 
+       		 console.log("Price in paise:", amount);
+    	} else {
+        	console.log("Invalid amount. Amount should be passed in integer paise. Minimum value is 100 paise (1 rupee).");
+   		 }
+		} else {
+    		console.log("Invalid amount value provided.");
+		}
+
+
+
+	var options = {
+    	key: 'rzp_test_dCDDZosyWH26G6', // Replace with your Razorpay API key
+    	amount: amount,
+    	currency: 'INR',
+    	name: 'CoderX',
+    	description: 'Payment for products',
+    	order_id: orderId,
+    	handler: function(response) {
+        console.log(response);
+
+        if (response.razorpay_payment_id) {
+            window.location.href = '/success'; 
+            alert('Payment successful! Thank you for your purchase.');
+        } else {
+            alert('Payment failed or was canceled. Please try again.');
+        }
+    	},
+    	prefill: {
+       	 	name: 'Anand Kumar',
+        	email: 'anandkr281198@gmail.com',
+        	contact: '8709986365'
+    	},
+   	 	theme: {
+        	color: '#F37254'
+   		 }
+	};
+
+	var rzp1 = new Razorpay(options);
+		rzp1.on('payment.failed', function(response) {
+    	alert('Payment failed');
+	});
+	rzp1.open();
+</script>
+
+</body>
+</html>
